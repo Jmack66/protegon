@@ -4,7 +4,7 @@
 
 class FallingPlatform : public Entity {
 public:
-	FallingPlatform(AABB hitbox, float life = 1.0f) : Entity({ hitbox }) {
+	FallingPlatform(AABB hitbox, float life = 4.0f) : Entity({ hitbox }) {
 		id = FALLING_TILE_ID;
 		originalColor = color = { 0, 0, 255, 255 };
 		falling = fallen = false;

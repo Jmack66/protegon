@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <limits>
 
-#define GRAVITY 0.2f
+#define GRAVITY 0.01f
 #define DRAG 0.2f
 
 void Entity::update() {

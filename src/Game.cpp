@@ -1,6 +1,6 @@
 #include "Game.h"
 #include "FallingPlatform.h"
-#include "KillBlock.h"
+//#include "KillBlock.h"
 #include "WinBlock.h"
 
 Game* Game::instance = nullptr;
