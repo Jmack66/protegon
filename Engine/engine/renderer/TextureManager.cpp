@@ -33,6 +33,46 @@ void TextureManager::Load(const char* texture_key, const char* texture_path) {
 	}
 }
 
+Texture TextureManager::CreateTexture(const Renderer& renderer, PixelFormat format, TextureAccess texture_access, const V2_int& size) {
+	auto texture = SDL_CreateTexture(renderer, static_cast<std::uint32_t>(format), static_cast<int>(texture_access), size.x, size.y);
+	if (!texture) {
+		SDL_LogError(SDL_LOG_CATEGORY_APPLICATION, "Couldn't set create texture: %s\n", SDL_GetError());
+		assert(!"Failed to create texture");
+	}
+	return Texture{ texture };
+}
+
+void TextureManager::RenderTexture(const Renderer& renderer, const Texture& texture, const AABB* source, const AABB* destination) {
+	SDL_Rect* src = NULL;
+	SDL_Rect* dest = NULL;
+	SDL_Rect src_rect;
+	SDL_Rect dest_rect;
+	if (source) {
+		src_rect.x = engine::math::FastCeil(source->position.x);
+		src_rect.y = engine::math::FastCeil(source->position.y);
+		src_rect.w = engine::math::FastCeil(source->size.x);
+		src_rect.h = engine::math::FastCeil(source->size.y);
+		src = &src_rect;
+	}
+	if (destination) {
+		dest_rect.x = engine::math::FastCeil(destination->position.x);
+		dest_rect.y = engine::math::FastCeil(destination->position.y);
+		dest_rect.w = engine::math::FastCeil(destination->size.x);
+		dest_rect.h = engine::math::FastCeil(destination->size.y);
+		dest = &dest_rect;
+	}
+	SDL_RenderCopy(renderer, texture, src, dest);
+}
+
+std::uint32_t& TextureManager::GetTexturePixel(void* pixels, const V2_int& position, int pitch) {
+	// Source: http://sdl.beuc.net/sdl.wiki/Pixel_Access
+	//int bpp = surface->format->BytesPerPixel;
+	int bpp = sizeof(std::uint32_t);
+	/* Here p is the address to the pixel we want to retrieve */
+	Uint8* p = (Uint8*)pixels + position.y * pitch + position.x * bpp;
+	return *(Uint32*)p;
+}
+
 Color TextureManager::GetDefaultRendererColor() {
 	return DEFAULT_RENDERER_COLOR;
 }
