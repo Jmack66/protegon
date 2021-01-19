@@ -13,8 +13,8 @@ struct EDFComponent {
 		thrust_percent = engine::math::Clamp(thrust_percent, 0.0, 1.0);
 		thrust_force = max_thrust_force * thrust_ramp_up * thrust_percent;
 	}
-	void Activate() {
-		thrust_force = max_thrust_force;
+	void Activate(double thrust) {
+		thrust_force = engine::math::Clamp(thrust, 0.0, max_thrust_force);
 	}
 	void Deactivate() {
 		thrust_force = 0.0;
@@ -22,6 +22,7 @@ struct EDFComponent {
 		thrust_percent = 1.0;
 	}
 	double GetTorque(double angle) {
+		engine::math::Clamp(angle, -20.0, 20.0); // this stops the controller from being able to use huge control values
 		return std::sin(engine::math::DegreeToRadian(angle)) * thrust_force * com_tvc;
 	}
 };
