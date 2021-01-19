@@ -18,6 +18,6 @@ ecs::Entity CreateHopper(V2_double position, V2_double size, ecs::Manager& manag
 	render.color = engine::ORANGE;
 	entity.AddComponent<StateVectorComponent>();
 	entity.AddComponent<EDFComponent>(7);//(6*9.81);
-	entity.AddComponent<HopperComponent>(0.1);
+	entity.AddComponent<HopperComponent>(0.08);
 	return entity;
 }
