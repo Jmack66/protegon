@@ -63,12 +63,12 @@ public:
 					} else if (engine::InputHandler::KeyPressed(Key::LEFT)) {
 						disturbance_torque = -3;
 					}
-					state.Update((double)transform.position.y - 320, (double)rb.velocity.y, (double)transform.position.x - 416.0, (double)rb.velocity.x, (double)transform.rotation, (double)hopper.theta_d);
+					state.Update((double)transform.position.x - 416.0, (double)rb.velocity.x, (double)transform.position.y - 320.0, (double)rb.velocity.y, (double)transform.rotation, (double)hopper.theta_d);
 					Vector2<double> control = state.ComputeControl();
-					LOG(control);
-					edf.Activate(control.x);
-					//double control_torque = edf.GetTorque(-control.y);
-					double control_torque = 0.0;
+					LOG(state.theta_dot);
+					edf.Activate(-control.x);
+					double control_torque = edf.GetTorque(control.y);
+					//double control_torque = 0.0;
 					hopper.theta_dd = (disturbance_torque + control_torque) / hopper.inertia * 0.005;
 					rb.acceleration.y -= edf.thrust_force * abs(std::cos(engine::math::DegreeToRadian(transform.rotation))) / rb.mass;
 					rb.acceleration.x += edf.thrust_force * std::sin(engine::math::DegreeToRadian(transform.rotation)) / rb.mass;
