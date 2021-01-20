@@ -8,10 +8,10 @@ struct StateVectorComponent {
 	double z_dot = 0.0;
 	double theta = 0.0;
 	double theta_dot = 0.0;
-	double k_gains[2][6] = { 1.0000, 1.0000 , -3.1623, -5.9064, -1.0, -1.0,
-						-3.1623 , -1.7612, -1.0,-1.0,-4.6563,-0.2833 };
-	//    0.0000    0.0000    3.1623    5.9064    0.0000    0.0000
-	//3.1623    1.7612 - 0.0000    0.0000    4.6563    0.2833
+	double k_gains[2][6] = { 0.0000, 0.0000 , 3.4157, 6.5247, 0.0000 , 0.0000,
+						1.2910 ,  2.2258 , 0.0000,0.0000,13.7573,0.4557 };
+	//-0.0000 - 0.0000    3.4157    6.5247 - 0.0000 - 0.0000
+	//	1.2910    2.2258    0.0000    0.0000   13.7573    0.4557
 	double sv[6][1] = { x,x_dot,z,z_dot,theta,theta_dot };
 	Vector2<double> V;
 	void Update(double x, double x_dot, double z, double z_dot, double theta, double theta_dot) {
@@ -30,10 +30,10 @@ struct StateVectorComponent {
 		sv[5][0] = theta_dot;
 	}
 	Vector2<double> ComputeControl(){
-		int rowFirst = 6;
-		int columnFirst = 1;
-		int rowSecond = 2;
-		int columnSecond = 6;
+		int rowFirst = 2;
+		int columnFirst = 6;
+		int rowSecond = 6;
+		int columnSecond = 1;
 		int i, j, k;
 		double mult[2][1] = { 0,0 };
 
@@ -44,7 +44,8 @@ struct StateVectorComponent {
 			{
 				for (k = 0; k < columnFirst; ++k)
 				{
-					mult[i][j] += k_gains[i][k] * sv[k][j];
+					mult[i][j] += -1.0*k_gains[i][k] * sv[k][j];
+					//LOG(mult[i][j]);
 				}
 			}
 		}
