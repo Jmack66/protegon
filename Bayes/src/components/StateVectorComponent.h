@@ -1,35 +1,27 @@
 #pragma once
 
+#include "HopperComponent.h"
 struct StateVectorComponent {
 	StateVectorComponent() = default;
-	double x = 0.0;
-	double x_dot = 0.0;
-	double z = 0.0;
-	double z_dot = 0.0;
-	double theta = 0.0;
-	double theta_dot = 0.0;
-	double k_gains[2][6] = { 0.0000, 0.0000 , 3.4157, 6.5247, 0.0000 , 0.0000,
-						1.2910 ,  2.2258 , 0.0000,0.0000,13.7573,0.4557 };
-	//-0.0000 - 0.0000    3.4157    6.5247 - 0.0000 - 0.0000
-	//	1.2910    2.2258    0.0000    0.0000   13.7573    0.4557
-	double sv[6][1] = { x,x_dot,z,z_dot,theta,theta_dot };
-	Vector2<double> V;
-	void Update(double x, double x_dot, double z, double z_dot, double theta, double theta_dot) {
-		this->x = x;
-		this->x_dot = x_dot;
-		this->z = z;
-		this->z_dot = z_dot;
-		this->theta = theta;
-		this->theta_dot = theta_dot;
+
+	double k_gains[2][6] = { 0.0000, 0.0000 , 1.4142 ,  4.1900, 0.0000 , 0.0000,
+						1.4142 ,  2.0355 , 0.0000,0.0000, 7.4330,1.2961 };
+	//-0.0000 - 0.0000    1.4142    4.1900 - 0.0000 - 0.0000
+		//1.4142    2.0355 - 0.0000    0.0000    7.4330    1.2961
+	double sv[6][1] = { 0,0,0,0,0,0 };
+	
+	void Update(TransformComponent &transform, RigidBody &rb,HopperComponent &hopper ) {
+			
 		//AHHHHHHHHHHHHHHHHH idk a better way to assing matrix values in the loop
-		sv[0][0] = x;
-		sv[1][0] = x_dot;
-		sv[2][0] = z;
-		sv[3][0] = z_dot;
-		sv[4][0] = theta;
-		sv[5][0] = theta_dot;
+		sv[0][0] = transform.position.x - transform.original_position.x;
+		sv[1][0] = rb.velocity.x;
+		sv[2][0] = transform.position.y - transform.original_position.y;
+		sv[3][0] = rb.velocity.y;
+		sv[4][0] = transform.rotation;
+		sv[5][0] = hopper.theta_d;
+		LOG(transform.position.x - transform.original_position.x);
 	}
-	Vector2<double> ComputeControl(){
+	V2_double ComputeControl(){
 		int rowFirst = 2;
 		int columnFirst = 6;
 		int rowSecond = 6;
@@ -49,10 +41,8 @@ struct StateVectorComponent {
 				}
 			}
 		}
-		
-		V.x = mult[0][0];
-		V.y = mult[1][0];
-		return V;
+	
+		return { mult[0][0],mult[1][0] };
 	
 	}
 
