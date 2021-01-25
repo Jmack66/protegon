@@ -10,14 +10,14 @@ struct StateVectorComponent {
 		//1.4142    2.0355 - 0.0000    0.0000    7.4330    1.2961
 	double sv[6][1] = { 0,0,0,0,0,0 };
 	
-	void Update(TransformComponent &transform, RigidBody &rb,HopperComponent &hopper ) {
+	void Update(V2_double origin,RigidBody &rb,HopperComponent &hopper ) {
 			
 		//AHHHHHHHHHHHHHHHHH idk a better way to assing matrix values in the loop
-		sv[0][0] = transform.position.x - transform.original_position.x;
-		sv[1][0] = rb.velocity.x;
-		sv[2][0] = transform.position.y - transform.original_position.y;
-		sv[3][0] = rb.velocity.y;
-		sv[4][0] = transform.rotation;
+		sv[0][0] = rb->position.x - origin.x;
+		sv[1][0] = rb.body->velocity.x;
+		sv[2][0] = rb.body->position.y - origin.y;
+		sv[3][0] = rb.body->velocity.y;
+		sv[4][0] = rb.body->orientation;
 		sv[5][0] = hopper.theta_d;
 		LOG(transform.position.x - transform.original_position.x);
 	}
@@ -37,7 +37,6 @@ struct StateVectorComponent {
 				for (k = 0; k < columnFirst; ++k)
 				{
 					mult[i][j] += -1.0*k_gains[i][k] * sv[k][j];
-					//LOG(mult[i][j]);
 				}
 			}
 		}

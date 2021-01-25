@@ -21,7 +21,8 @@ ecs::Entity CreateHopper(V2_double position, ecs::Manager& manager, engine::Scen
 
 	entity.AddComponent<RigidBodyComponent>(b);
 	auto& render = entity.AddComponent<RenderComponent>(engine::ORANGE);
-
+	entity.AddComponent<StateVectorComponent>();
+	entity.AddComponent<EDFComponent>(60.0);//60 is the thrust output of the edf
 	auto camera_zoom = V2_double{ 0.5, 0.5 };
 	auto& cc = entity.AddComponent<CameraComponent>(engine::Camera{ camera_zoom }, true);
 	scene.SetCamera(cc.camera);

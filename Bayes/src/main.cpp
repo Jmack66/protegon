@@ -51,7 +51,8 @@ public:
 
 		auto hopper = scene.manager.GetEntitiesWith<PlayerController, RigidBodyComponent>()[0];
 		auto hb = hopper.GetComponent<RigidBodyComponent>().body;
-
+		auto edf = hopper.GetComponent<EDFComponent>();
+		auto controller = hopper.GetComponent<StateVectorComponent>();
 		// Gravitational acceleration of Hopper (m/s^2).
 		auto gravity = V2_double{ 0, 9.81 };
 		// Hopper properties.
@@ -61,7 +62,7 @@ public:
 		auto players = scene.manager.GetComponentTuple<PlayerController, RigidBodyComponent>();
 		
 		// Thrust of EDF (N).
-		auto thrust = 50.0;
+		auto thrust = edf.Activate(10.0); // the space bar can be used to add an altitude disturbance
 		if (engine::InputHandler::KeyPressed(Key::SPACE)) {
 			for (auto [entity, player, rb] : players) {
 				// Apply varying thrust based on orientation.
@@ -83,21 +84,25 @@ public:
 		}
 
 
-		/*
+	
 
 
 		for (auto [entity, player, rb] : players) {
 			
-			// *Add control here*
+			// Control 
+			controller.Update(original_position,&rb, &hopper);
+			V2_double control = controller.ComputeControl();
+
+
 
 			// Add forces to the net force.
-			rb.force += 0; // Blah blah blah
+			rb.body->force.y += ; // Blah blah blah
 
 			// Add forces to the net force.
-			rb.torque += 0;// Blah blah blah
+			rb.body->torque += ;// Blah blah blah
 		}
 
-		*/
+	
 
 
 		// Physics.

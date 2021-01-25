@@ -13,8 +13,8 @@ struct EDFComponent {
 		thrust_percent = engine::math::Clamp(thrust_percent, 0.0, 1.0);
 		thrust_force = max_thrust_force * thrust_ramp_up * thrust_percent;
 	}
-	void Activate() {
-		thrust_force = max_thrust_force;
+	void Activate(double thrust) {
+		thrust_force = engine::math::Clamp(thrust,0.0, max_thrust_force);
 	}
 	void Deactivate() {
 		thrust_force = 0.0;

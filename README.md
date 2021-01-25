@@ -1,2 +1,3 @@
 # protegon
-Sandbox 2D platformer game utilizing SDL2 development library
+<b> A fork of martinstarkov's protegon engine to test control systems for Endeavour Rocket Teams Bayes Hopper</b>
+
