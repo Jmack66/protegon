@@ -6,7 +6,9 @@
 #include <string>
 
 #include "utils/Direction.h"
-#include "utils/Vector2.h"
+#include "utils/math/Vector2.h"
+
+// TODO: Complete rework, lol.
 
 struct SpriteInformation {
 	V2_double start;

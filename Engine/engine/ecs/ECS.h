@@ -37,6 +37,11 @@ SOFTWARE.
 #include <functional> // std::hash for hashing
 #include <type_traits> // std::is_base_of_v for system type checks
 
+// TODO: Check that GetDeadEntityCount and GetEntityCount functions work as intended.
+// TODO: Check that RemoveComponents functions work as intended.
+// TODO: Update documentation with GetDeadEntityCount, GetEntityCount, RemoveComponents.
+// TODO: Check that documentation is fully up to date.
+
 namespace ecs {
 
 using EntityId = std::uint32_t;
@@ -394,6 +399,8 @@ public:
 	void ForEach(T&& function);
 	// Return the number of entities which are currently alive in the manager.
 	std::size_t GetEntityCount();
+	// Return the number of entities which are currently not alive in the manager.
+	std::size_t GetDeadEntityCount();
 	// Retrieve a vector of handles to each entity in the manager.
 	std::vector<Entity> GetEntities();
 	// Retrieve a vector of handles to each entity in the manager which has all of the given components.
@@ -434,6 +441,8 @@ public:
 	// Remove a component from an entity.
 	template <typename T>
 	void RemoveComponent(Entity entity);
+	// Remove all components from an entity.
+	void RemoveComponents(Entity entity);
 	// Remove multiple components from an entity.
 	template <typename ...Ts>
 	void RemoveComponents(Entity entity);
@@ -453,6 +462,8 @@ public:
 	bool HasComponents(const Entity entity) const;
 	// Returns whether an entity is alive.
 	bool IsAlive(const Entity entity) const;
+	// Return the manager's unique id. Can be useful for comparison purposes.
+	ManagerId GetId() const { return id_; }
 private:
 	// Internally used method implementations.
 
@@ -461,15 +472,7 @@ private:
 	// Add entity id to deletion list but do not invalidate any handles.
 	void DestroyEntity(const EntityId id, const EntityVersion version, bool loop_entity) {
 		if (IsAlive(id, version)) {
-			auto pool_count = static_cast<ComponentId>(pools_.size());
-			for (ComponentId i = 0; i < pool_count; ++i) {
-				auto& pool = GetPool(i);
-				if (pool.IsValid()) {
-					pool.RemoveComponentAddress(id);
-					// Pool index in pools_ vector is the corresponding component's id.
-					ComponentChange(id, i, loop_entity);
-				}
-			}
+			RemoveComponents(id, loop_entity);
 			// Increment entity version, this will invalidate all entity handles with the previous version
 			assert(id < entities_.size() && "Could not increment dead entity id");
 			++entities_[id].version;
@@ -561,6 +564,18 @@ private:
 	template <typename ...Ts>
 	std::tuple<Ts&...> GetComponents(const EntityId id) const {
 		return std::forward_as_tuple<Ts&...>(GetComponent<Ts>(id)...);
+	}
+	// RemoveComponents for all components implementation.
+	void RemoveComponents(const EntityId id, bool loop_entity) {
+		auto pool_count = static_cast<ComponentId>(pools_.size());
+		for (ComponentId i = 0; i < pool_count; ++i) {
+			auto& pool = GetPool(i);
+			if (pool.IsValid()) {
+				pool.RemoveComponentAddress(id);
+				// Pool index i in pools_ vector is the corresponding component's id.
+				ComponentChange(id, i, loop_entity);
+			}
+		}
 	}
 	// RemoveComponents implementation.
 	template <typename ...Ts>
@@ -786,6 +801,12 @@ public:
 		assert(IsAlive() && "Cannot remove component from dead entity");
 		return manager_->RemoveComponent<T>(id_, loop_entity_);
 	}
+	// Remove all components from the entity.
+	void RemoveComponents() {
+		assert(IsValid() && "Cannot remove all components from null entity");
+		assert(IsAlive() && "Cannot remove all components from dead entity");
+		return manager_->RemoveComponents(id_, loop_entity_);
+	}
 	// Remove multiple components from the entity.
 	template <typename ...Ts>
 	void RemoveComponents() {
@@ -894,6 +915,9 @@ inline void Manager::DestroyEntity(Entity entity) {
 	DestroyEntity(entity.id_, entity.version_, entity.loop_entity_);
 }
 inline std::size_t Manager::GetEntityCount() {
+	return entity_count_ - GetDeadEntityCount();
+	/*
+	// TODO: Remove after checking the above works.
 	std::size_t entities = 0;
 	for (EntityId id = internal::first_valid_entity_id; id <= entity_count_; ++id) {
 		auto& entity_data = entities_[id];
@@ -902,6 +926,10 @@ inline std::size_t Manager::GetEntityCount() {
 		}
 	}
 	return entities;
+	*/
+}
+inline std::size_t Manager::GetDeadEntityCount() {
+	return free_entity_ids.size();
 }
 inline std::vector<Entity> Manager::GetEntities() {
 	return GetEntitiesWith<>();
@@ -995,6 +1023,10 @@ template <typename T>
 inline void Manager::RemoveComponent(Entity entity) {
 	assert(IsAlive(entity.id_, entity.version_) && "Cannot remove component from dead entity");
 	RemoveComponent<T>(entity.id_, entity.loop_entity_);
+}
+inline void Manager::RemoveComponents(Entity entity) {
+	assert(IsAlive(entity.id_, entity.version_) && "Cannot remove all components from dead entity");
+	RemoveComponents(entity.id_, entity.loop_entity_);
 }
 template <typename ...Ts>
 inline void Manager::RemoveComponents(Entity entity) {

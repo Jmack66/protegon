@@ -2,17 +2,28 @@
 
 #include <engine/Include.h>
 
-ecs::Entity CreateHopper(V2_double position, V2_double size, ecs::Manager& manager) {
+ecs::Entity CreateHopper(V2_double position, ecs::Manager& manager, engine::Scene& scene) {
 	auto entity = manager.CreateEntity();
-	V2_double hopper_acceleration = { 2, 4 };
-	entity.AddComponent<TransformComponent>(position);
-	entity.AddComponent<PlayerController>(hopper_acceleration);
-	entity.AddComponent<RigidBodyComponent>(RigidBody{ UNIVERSAL_DRAG, V2_double{ 0, 9.81 }, 5 });
-	entity.AddComponent<CollisionComponent>(position, size);
-	entity.AddComponent<SpriteComponent>("./resources/textures/hopper.png", V2_int{ 20 * 2, 23 * 2 });
-	entity.AddComponent<DirectionComponent>();
-	entity.AddComponent<RenderComponent>();
-	entity.AddComponent<StateVectorComponent>();
-	entity.AddComponent<EDFComponent>(6*9.81);
+	entity.AddComponent<PlayerController>();
+	Polygon polygon;
+	auto size = V2_double{ 64, 64 };
+	entity.AddComponent<SizeComponent>(size);
+	std::vector<V2_double> vertices;
+	vertices.resize(4);
+	// Create hopper shape.
+	vertices[0] = { -size.x / 4.0, -size.y / 2.0 };
+	vertices[1] = { size.x / 4.0, -size.y / 2.0 };
+	vertices[2] = { size.x / 2.0, size.y / 2.0 };
+	vertices[3] = { -size.x / 2.0, size.y / 2.0 };
+	polygon.Set(vertices);
+	auto* b = new Body(&polygon, position + size / 2.0);
+	b->name = 69; // Do not change, otherwise collisions will break.
+
+	entity.AddComponent<RigidBodyComponent>(b);
+	auto& render = entity.AddComponent<RenderComponent>(engine::ORANGE);
+
+	auto camera_zoom = V2_double{ 0.5, 0.5 };
+	auto& cc = entity.AddComponent<CameraComponent>(engine::Camera{ camera_zoom }, true);
+	scene.SetCamera(cc.camera);
 	return entity;
 }

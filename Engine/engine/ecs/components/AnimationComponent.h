@@ -2,23 +2,23 @@
 
 #include "Component.h"
 
-#include "utils/Defines.h"
 #include "utils/Math.h"
-
-using AnimationName = std::string;
+#include "core/Engine.h"
 
 struct AnimationComponent {
-	AnimationName name; // name of current animation
-	int sprites; // amount of sprites in current animation
-	double animation_delay; // second delay between animation frames
-	int frame; // frame of animation
+	std::string current_animation;
+	double animation_delay; // Second delay between animation frames.
+	int frame; // Frame of animation.
 	int cycles_per_frame;
 	int counter;
-	AnimationComponent(int sprites = 1, double animation_delay = 0.1, int frame = 0) : sprites{ sprites }, animation_delay{ animation_delay }, frame{ frame }, name{ "" } {
+	AnimationComponent(const std::string& starting_animation, double animation_delay = 0.1, int frame = 0) :
+		current_animation{ starting_animation },
+		animation_delay{ animation_delay }, 
+		frame{ frame } {
 		Init();
 	}
 	void Init() {
-		cycles_per_frame = engine::math::RoundCast<int>(FPS * animation_delay);
+		cycles_per_frame = engine::math::Round(static_cast<double>(engine::Engine::FPS()) * animation_delay);
 		counter = cycles_per_frame * frame;
 	}
 };
