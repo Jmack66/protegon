@@ -47,10 +47,7 @@ public:
 				pos = primary_entity.GetComponent<TransformComponent>().position;
 			}
 			if (primary_entity.HasComponent<RigidBodyComponent>()) {
-				auto body = primary_entity.GetComponent<RigidBodyComponent>().body;
-				if (body != nullptr) {
-					pos = body->position;
-				}
+				pos = primary_entity.GetComponent<RigidBodyComponent>().body->position;
 			}
 			camera->Center(pos, size);
 		}

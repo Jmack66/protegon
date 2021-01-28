@@ -5,7 +5,6 @@
 
 #include <SDL.h>
 
-#include "utils/Debug.h"
 #include "core/Engine.h"
 
 namespace engine {

@@ -93,6 +93,7 @@ class PhysicsSystem : public ecs::System<TransformComponent, RigidBodyComponent>
 public:
 	virtual void Update() override final {
 		for (auto& [entity, transform, rigid_body] : entities) {
+			/*
 			auto& rb = rigid_body.rigid_body;
 			// Gravity.
 			rb.acceleration += rb.gravity;
@@ -112,6 +113,7 @@ public:
 			} else if (std::abs(rb.velocity.y) < LOWEST_VELOCITY) {
 				rb.velocity.y = 0.0;
 			}
+			*/
 		}
 	}
 };

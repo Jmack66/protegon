@@ -2,11 +2,9 @@
 
 #include <ostream> // std::ostream
 
-#include "utils/math/Vector2.h"
+#include "utils/Vector2.h"
 
 struct CollisionManifold {
-	CollisionManifold() = default;
-	CollisionManifold(const V2_double& normal) : normal{ normal } {}
 	V2_double point;
 	V2_double normal;
 	double time = 0.0;

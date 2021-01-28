@@ -1,6 +1,6 @@
 #pragma once
 
-#include "utils/math/Vector2.h"
+#include "utils/Vector2.h"
 
 struct SizeComponent {
 	SizeComponent(V2_double size) : size{ size } {}

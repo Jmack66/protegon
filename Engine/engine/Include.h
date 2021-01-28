@@ -25,13 +25,16 @@
 #include "event/EventHandler.h"
 #include "event/Events.h"
 
-#include "renderer/particles/ParticleManager.h"
-
 #include "ui/UI.h"
 #include "ui/UIComponents.h"
 
+#include "utils/Vector2.h"
 #include "utils/Math.h"
-#include "utils/Debug.h"
+#include "utils/RNG.h"
+#include "utils/PerlinNoise.h"
+#include "utils/PerlinNoise2.hpp"
+#include "utils/SimplexNoise.h"
+#include "utils/Hasher.h"
+#include "utils/Logger.h"
 #include "utils/Timer.h"
-#include "utils/Direction.h"
-#include "utils/TypeTraits.h"
+#include "utils/AllocationMetrics.h"

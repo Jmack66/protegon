@@ -11,8 +11,7 @@
 #include "renderer/Window.h"
 #include "renderer/Renderer.h"
 
-#include "utils/Debug.h"
-#include "utils/math/Vector2.h"
+#include "utils/Vector2.h"
 
 #include "renderer/TextureManager.h"
 

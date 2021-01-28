@@ -18,4 +18,3 @@
 #include "ecs/components/SizeComponent.h"
 #include "ecs/components/CameraComponent.h"
 #include "ecs/components/TagComponent.h"
-#include "ecs/components/ParticleComponent.h"

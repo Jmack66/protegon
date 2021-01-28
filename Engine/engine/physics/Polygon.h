@@ -1,5 +1,9 @@
 #pragma once
 
+#include <vector>
+#include <cstdint>
+
+#include "utils/Vector2.h"
 #include "Shape.h"
 
 class Polygon : public Shape {
@@ -19,6 +23,7 @@ public:
     void Set(std::vector<V2_double> vertices);
     // The extreme point along a direction within a polygon
     V2_double GetSupport(const V2_double& direction);
+    // TODO: Change to arrays and templates?
     std::vector<V2_double> vertices;
     std::vector<V2_double> normals;
     Matrix<double, 2, 2> rotation_matrix;
